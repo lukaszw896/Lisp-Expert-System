@@ -233,7 +233,7 @@
 (defun startAction(action)
 	(if(numberp action)
 		(cond   ((= action 1)
-				(addProblem))
+				(getProblemFromUser))
 				((= action 2)
 				(startExpertSystem))
 				((= action 3)
