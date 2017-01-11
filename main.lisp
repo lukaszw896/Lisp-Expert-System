@@ -15,9 +15,8 @@
 
 (defparameter *fileLoadingList* (list nil))
 
-
-(defparameter *problemList* 
-	(list 
+(defparameter *problemList* nil)
+	#||(list 
 		(list "Lack of power cable"
 		"Computer turns on?"
 		"false"
@@ -35,17 +34,7 @@
 		"Existance of ethernet port?"
 		"false")
 	)
-)
-
-(defun attach1 (x)
-  (push x (cdr (last *fileLoadingList*)))
- )
-
-(defun get-file (filename)
-  (with-open-file (stream filename)
-    (loop for line = (read-line stream nil)
-          while line do
-          (attach1 line))))
+)||#
 
 (defun analyseProblem()
 	(defparameter problem (car *sublist*))
@@ -83,7 +72,10 @@
 				)
 			)
 		)
-		(format t "YOUR PROBLEM: ~s~%" problem)
+		(progn 
+			(format t "YOUR PROBLEM: ~s~%" problem)
+			(terpri)
+		)
 	)
 )
 
@@ -95,11 +87,24 @@
 	(format t "* 3.Exit program                *~%")
 	(format t "*********************************~%")
 )
-
+(defun save-db (filename)
+  (with-open-file (out filename
+                   :direction :output
+                   :if-exists :supersede)
+    (with-standard-io-syntax
+      (print *problemList* out))))
+	  
+(defun load-db (filename)
+  (with-open-file (in filename)
+    (with-standard-io-syntax
+      (setf *problemList* (read in)))))
+	  
 (defun addProblem()
- (get-file "testDb.txt")
+ #||(get-file "testDb.txt")
  (format t "~s~%" *fileLoadingList*)
- (format t "~s~%" *problemList*)
+ (setf *problemList* (cdr *problemList*))
+ (format t "~s~%" *problemList*)||#
+ (save-db "dbSaveTest.txt")
 )
 
 (defun startExpertSystem()
@@ -146,5 +151,5 @@
 (menuLoop)
 ) 
 
-
+(load-db "dbSaveTest.txt")
 (menuLoop)
