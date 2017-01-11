@@ -7,7 +7,7 @@
 
 ;;list containing all symptoms checked during expert system session
 (defparameter *checkedSymptomsList* (list 
-		"Computer turns on?"
+		"Dummy?"
 		"false"))
 
 (defparameter *sublist* nil)
@@ -106,7 +106,13 @@
 					(if (equalp symptomValue (validateAnswerInput userInput))
 						(progn 
 							(setf *symptomList* (cddr *symptomList*))
+							(push symptom (cdr (last *checkedSymptomsList*)))
+							(push userInput (cdr (last *checkedSymptomsList*)))
 							(checkSymptoms problem)
+						)
+						(progn 
+							(push symptom (cdr (last *checkedSymptomsList*)))
+							(push userInput (cdr (last *checkedSymptomsList*)))
 						)
 					)
 				)
@@ -127,6 +133,10 @@
 	(format t "* 2.Start expert system         *~%")
 	(format t "* 3.Exit program                *~%")
 	(format t "*********************************~%")
+)
+
+(defun printAddProblemMenu()
+
 )
 (defun save-db (filename)
   (with-open-file (out filename
@@ -185,6 +195,7 @@
 (setf *menuAction* (read))
 (terpri)
 (startAction *menuAction*)
+(setf *checkedSymptomsList* (list "Dummy?" "false"))
 (menuLoop)
 ) 
 
