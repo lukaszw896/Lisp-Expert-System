@@ -13,6 +13,9 @@
 ;;global list for symptoms of checked problem
 (defparameter *symptomList* nil)
 
+(defparameter *fileLoadingList* (list nil))
+
+
 (defparameter *problemList* 
 	(list 
 		(list "Lack of power cable"
@@ -33,6 +36,16 @@
 		"false")
 	)
 )
+
+(defun attach1 (x)
+  (push x (cdr (last *fileLoadingList*)))
+ )
+
+(defun get-file (filename)
+  (with-open-file (stream filename)
+    (loop for line = (read-line stream nil)
+          while line do
+          (attach1 line))))
 
 (defun analyseProblem()
 	(defparameter problem (car *sublist*))
@@ -84,7 +97,9 @@
 )
 
 (defun addProblem()
-
+ (get-file "testDb.txt")
+ (format t "~s~%" *fileLoadingList*)
+ (format t "~s~%" *problemList*)
 )
 
 (defun startExpertSystem()

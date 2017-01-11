@@ -1,0 +1,5 @@
+Lack of power cable
+Computer turns on?
+false
+Pluged in power cable?
+false
