@@ -6,7 +6,9 @@
 ;;Since lists cannot be passed as arguments into functions I created  global lists. Maybe it's stupid and hard to read but it's easy to implement for newbee.
 
 ;;list containing all symptoms checked during expert system session
-(defparameter *checkedSymptomsList* nil)
+(defparameter *checkedSymptomsList* (list 
+		"Computer turns on?"
+		"false"))
 
 (defparameter *sublist* nil)
 
@@ -14,6 +16,9 @@
 (defparameter *symptomList* nil)
 
 (defparameter *fileLoadingList* (list nil))
+
+;;list used for different tasks
+(defparameter *tmpList* nil)
 
 (defparameter *problemList* nil)
 	#||(list 
@@ -56,25 +61,61 @@
 		  )))
 )
 
+(defun checkPreviousSymptoms (symptom)
+	(setf *tmpList* *checkedSymptomsList*)
+	(traverseTroughPreviusSymptoms symptom)
+	(if *tmpList*
+		(progn 
+			(car *tmpList*)
+		)
+	)
+)
+
+(defun traverseTroughPreviusSymptoms(symptom)
+	(if *tmpList*
+		(if (equalp (car *tmpList*) symptom)
+			(setf *tmpList* (cdr *tmpList*))
+			(progn
+				(setf *tmpList* (cddr *tmpList*))
+				(traverseTroughPreviusSymptoms symptom)
+			)
+		)
+	)
+)
+
 (defun checkSymptoms(problem)
 	(if *symptomList*
 		(progn 
 			(defparameter symptom (car *symptomList*))
 			(defparameter symptomValue (cadr *symptomList*))
-			(format t "Symptom ~s~%" symptom)
-			(format t "Type 'true' or 'false'.~%")
-			(defparameter userInput (read-line))
-			;;If user answer to symptom the same as DB than check further symptoms of problem. Go to another problem otherwise
-			(if (equalp symptomValue (validateAnswerInput userInput))
-				(progn 
-					(setf *symptomList* (cddr *symptomList*))
-					(checkSymptoms problem)
+			(setf previousValue (checkPreviousSymptoms symptom))
+			(if previousValue
+				(progn
+					(if (equalp symptomValue previousValue)
+						(progn 
+							(setf *symptomList* (cddr *symptomList*))
+							(checkSymptoms problem)
+						)
+					)
+				)
+				(progn
+					(format t "Symptom ~s~%" symptom)
+					(format t "Type 'true' or 'false'.~%")
+					(defparameter userInput (read-line))
+					;;If user answer to symptom the same as DB than check further symptoms of problem. Go to another problem otherwise
+					(if (equalp symptomValue (validateAnswerInput userInput))
+						(progn 
+							(setf *symptomList* (cddr *symptomList*))
+							(checkSymptoms problem)
+						)
+					)
 				)
 			)
 		)
 		(progn 
 			(format t "YOUR PROBLEM: ~s~%" problem)
 			(terpri)
+			
 		)
 	)
 )
@@ -100,17 +141,13 @@
       (setf *problemList* (read in)))))
 	  
 (defun addProblem()
- #||(get-file "testDb.txt")
- (format t "~s~%" *fileLoadingList*)
- (setf *problemList* (cdr *problemList*))
- (format t "~s~%" *problemList*)||#
- (save-db "dbSaveTest.txt")
+ ;;(save-db "dbSaveTest.txt")
 )
 
 (defun startExpertSystem()
 	(catch 'err 
-		(dolist (tmpList *problemList*)
-			(setf *sublist* tmpList)
+		(dolist (myList *problemList*)
+			(setf *sublist* myList)
 			(analyseProblem)
 			(if *symptomList* 
 			()
