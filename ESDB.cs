@@ -1,0 +1,2 @@
+
+(("Lack of power cable" "Computer turns on?" "false" "Pluged in power cable?" "false") ("Damaged power brick" "Computer turns on?" "true" "Computer is restarting?" "true") ("Lack of network card" "Internet connection?" "false" "Existance of ethernet port?" "false") ("Test problem" "Symptom 1" "false" "Symptom 2" "true")) 

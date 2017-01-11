@@ -1,8 +1,6 @@
 ;;;(defvar *example* (read))
 ;;;(format t "~s~%" *example*)
 
-(defvar *menuAction* nil)
-
 ;;Since lists cannot be passed as arguments into functions I created  global lists. Maybe it's stupid and hard to read but it's easy to implement for newbee.
 
 ;;list containing all symptoms checked during expert system session
@@ -136,7 +134,12 @@
 )
 
 (defun printAddProblemMenu()
-
+	(format t "******* Choose action: **********~%")
+	(format t "*********************************~%")
+	(format t "* 1.Print all problems          *~%")
+	(format t "* 2.Print all symptoms          *~%")
+	(format t "* 3.Add problem to DB           *~%")
+	(format t "*********************************~%")
 )
 (defun save-db (filename)
   (with-open-file (out filename
@@ -149,10 +152,60 @@
   (with-open-file (in filename)
     (with-standard-io-syntax
       (setf *problemList* (read in)))))
-	  
-(defun addProblem()
- ;;(save-db "dbSaveTest.txt")
+	 
+(defun printAllProblems()
+
 )
+
+(defun printAllSymptoms()
+
+)
+
+(defun getProblemFromUser()
+	(format t "**Please type name of the problem you want to add to DB**~%")
+	(setf problemName (read-line))
+	(setf *tmpList* (list problemName))
+	(getSymptomName)
+)
+
+(defun getSymptomName()
+	(format t "**Please type symptom you want to add to DB (To end adding type end)**~%")
+	(setf symptomName (read-line))
+	(if (equalp symptomName "end")
+		(progn
+			(push *tmpList* (cdr (last *problemList*)))
+			(save-db "ESDB.cs")
+		)		
+		(progn 
+			(push symptomName (cdr (last *tmpList*)))
+			(getSymptomValue)
+			(getSymptomName)
+		)
+	)		
+)
+
+(defun getSymptomValue()
+	(format t "**Type the value of symptom - true or false**~%")
+	(setf symVal (validateAnswerInput (read-line)))
+	(push symVal (cdr (last *tmpList*)))
+)
+	 
+(defun addProblem()
+	(printAddProblemMenu)
+	(setf action (read))
+	(if(numberp action)
+		(cond   ((= action 1)
+				(printAllProblems))
+				((= action 2)
+				(printAllSymptoms))
+				((= action 3)
+				(getProblemFromUser))
+				((wrongInput))
+		)
+		(wrongInput))
+)
+
+
 
 (defun startExpertSystem()
 	(catch 'err 
@@ -192,9 +245,9 @@
 
 (defun menuLoop()
 (printMenu)
-(setf *menuAction* (read))
+(setf menuAction (read))
 (terpri)
-(startAction *menuAction*)
+(startAction menuAction)
 (setf *checkedSymptomsList* (list "Dummy?" "false"))
 (menuLoop)
 ) 
