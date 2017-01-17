@@ -139,7 +139,8 @@
 	(prints "*********************************")
 	(prints "* 1.Add problem to the database *")
 	(prints "* 2.Start expert system         *")
-	(prints "* 3.Exit program                *")
+	(prints "* 3.Print macroexpand           *")
+	(prints "* 4.Exit program                *")
 	(prints "*********************************")
 )
 
@@ -246,6 +247,8 @@
 				((= action 2)
 				(startExpertSystem))
 				((= action 3)
+				(prints (macroexpand '(printAllProblemsAndSymptoms *tmpList*))))
+				((= action 4)
 				(exitProgram))
 				((wrongInput))
 		)
@@ -262,12 +265,17 @@
 ) 
 
 (defmacro printAllProblemsAndSymptoms (condition)
-	`(if ,condition
+	`(ifp ,condition 
+		(prints (car *tmpList*))
+		(setf *tmpList* (cdr *tmpList*))
+		(printAllProblemsAndSymptoms ,condition))
+	#||`(if ,condition
 		(progn 
 		(prints (car *tmpList*))
 		(setf *tmpList* (cdr *tmpList*))
 		(printAllProblemsAndSymptoms ,condition))
 		)
+		||#
 )
 
 (load-db "dbSaveTest.txt")
