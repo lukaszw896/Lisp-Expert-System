@@ -38,11 +38,20 @@
 		"false")
 	)
 )||#
+(defmacro prints (input-string)
+	`(format t "~s~%" ,input-string)
+)
+
+(defmacro ifp (condition &body body1)
+	`(if ,condition
+		(progn ,@body1)
+	)
+)
 
 (defun analyseProblem()
 	(defparameter problem (car *sublist*))
 	(setf *symptomList* (cdr *sublist*))
-	 ;;(format t "Problem: ~s~%" problem)
+	;;(format t "Problem: ~s~%" problem)
 	(checkSymptoms problem)
 )
 
@@ -53,7 +62,7 @@
 		  ((equalp "true" userInput)
 		  userInput)
 		  ((progn 
-			(format t "Answer is not in the correct format. Please type true or false.")
+			(prints "Answer is not in the correct format. Please type true or false.")
 			(defparameter userInput (read-line))
 			(validateAnswerInput userInput)
 		  )))
@@ -62,11 +71,12 @@
 (defun checkPreviousSymptoms (symptom)
 	(setf *tmpList* *checkedSymptomsList*)
 	(traverseTroughPreviusSymptoms symptom)
-	(if *tmpList*
+	(ifp *tmpList* (car *tmpList*))
+	#||(if *tmpList*
 		(progn 
 			(car *tmpList*)
 		)
-	)
+	)||#
 )
 
 (defun traverseTroughPreviusSymptoms(symptom)
@@ -98,7 +108,7 @@
 				)
 				(progn
 					(format t "Symptom ~s~%" symptom)
-					(format t "Type 'true' or 'false'.~%")
+					(prints "Type 'true' or 'false'.")
 					(defparameter userInput (read-line))
 					;;If user answer to symptom the same as DB than check further symptoms of problem. Go to another problem otherwise
 					(if (equalp symptomValue (validateAnswerInput userInput))
@@ -125,21 +135,21 @@
 )
 
 (defun printMenu()
-	(format t "******* Choose action: **********~%")
-	(format t "*********************************~%")
-	(format t "* 1.Add problem to the database *~%")
-	(format t "* 2.Start expert system         *~%")
-	(format t "* 3.Exit program                *~%")
-	(format t "*********************************~%")
+	(prints "******* Choose action: **********")
+	(prints "*********************************")
+	(prints "* 1.Add problem to the database *")
+	(prints "* 2.Start expert system         *")
+	(prints "* 3.Exit program                *")
+	(prints "*********************************")
 )
 
 (defun printAddProblemMenu()
-	(format t "******* Choose action: **********~%")
-	(format t "*********************************~%")
-	(format t "* 1.Print all problems          *~%")
-	(format t "* 2.Print all symptoms          *~%")
-	(format t "* 3.Add problem to DB           *~%")
-	(format t "*********************************~%")
+	(prints "******* Choose action: **********")
+	(prints "*********************************")
+	(prints "* 1.Print all problems          *")
+	(prints "* 2.Print all symptoms          *")
+	(prints "* 3.Add problem to DB           *")
+	(prints "*********************************")
 )
 (defun save-db (filename)
   (with-open-file (out filename
@@ -174,7 +184,7 @@
 	(if (equalp symptomName "end")
 		(progn
 			(push *tmpList* (cdr (last *problemList*)))
-			(save-db "ESDB.cs")
+			(save-db "dbSaveTest.txt")
 		)		
 		(progn 
 			(push symptomName (cdr (last *tmpList*)))
@@ -185,7 +195,7 @@
 )
 
 (defun getSymptomValue()
-	(format t "**Type the value of symptom - true or false**~%")
+	(prints "**Type the value of symptom - true or false**")
 	(setf symVal (validateAnswerInput (read-line)))
 	(push symVal (cdr (last *tmpList*)))
 )
@@ -216,7 +226,7 @@
 			()
 			(throw 'err "ERROR"))
 		)
-		(format t "Sorry but we weren't able to find your problem.~%")
+		(prints "Sorry but we weren't able to find your problem.")
 		(terpri)
 	)
 )
@@ -252,5 +262,9 @@
 (menuLoop)
 ) 
 
+
+
 (load-db "dbSaveTest.txt")
 (menuLoop)
+
+;;(prints (read-line))
