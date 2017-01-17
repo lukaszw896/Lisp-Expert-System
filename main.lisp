@@ -262,9 +262,19 @@
 (menuLoop)
 ) 
 
-
+(defmacro printAllProblemsAndSymptoms (condition)
+	`(if ,condition
+		(progn 
+		(prints (car *tmpList*))
+		(setf *tmpList* (cdr *tmpList*))
+		(printAllProblemsAndSymptoms ,condition))
+		)
+)
 
 (load-db "dbSaveTest.txt")
-(menuLoop)
+;;(menuLoop)
+(setf *tmpList* *problemList*)
+(format t "~s~%"(macroexpand '(prints "Test")))
+(format t "~s~%"(macroexpand-1 '(printAllProblemsAndSymptoms *tmpList*)))
 
 ;;(prints (read-line))
