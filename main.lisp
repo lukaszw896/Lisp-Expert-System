@@ -19,27 +19,13 @@
 (defparameter *tmpList* nil)
 
 (defparameter *problemList* nil)
-	#||(list 
-		(list "Lack of power cable"
-		"Computer turns on?"
-		"false"
-		"Pluged in power cable?"
-		"false")
-		(list "Damaged power brick"
-		"Computer turns on?"
-		"true"
-		"Computer is restarting?"
-		"true"
-		)
-		(list "Lack of network card"
-		"Internet connection?"
-		"false"
-		"Existance of ethernet port?"
-		"false")
-	)
-)||#
+
 (defmacro prints (input-string)
 	`(format t "~s~%" ,input-string)
+)
+
+(defmacro printss (input-string parameter)
+	`(format t "~s~s~%" ,input-string ,parameter)
 )
 
 (defmacro ifp (condition &body body1)
@@ -122,11 +108,21 @@
 			)
 		)
 		(progn 
-			(format t "YOUR PROBLEM: ~s~%" problem)
+			(printss "YOUR PROBLEM: " problem)
 			(terpri)
 			
 		)
 	)
+)
+
+(defmacro printChooseAction(action1 action2 action3 action4)
+	(prints "******* Choose action: **********")
+	(prints "*********************************")
+	(prints action1)
+	(prints action2)
+	(prints action3)
+	(prints action4)
+	(prints "*********************************")
 )
 
 (defun printMenu()
@@ -138,6 +134,7 @@
 	(prints "* 4.Exit program                *")
 	(prints "*********************************")
 )
+
 
 (defun printAddProblemMenu()
 	(prints "******* Choose action: **********")
