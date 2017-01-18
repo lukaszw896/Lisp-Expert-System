@@ -19,27 +19,13 @@
 (defparameter *tmpList* nil)
 
 (defparameter *problemList* nil)
-	#||(list 
-		(list "Lack of power cable"
-		"Computer turns on?"
-		"false"
-		"Pluged in power cable?"
-		"false")
-		(list "Damaged power brick"
-		"Computer turns on?"
-		"true"
-		"Computer is restarting?"
-		"true"
-		)
-		(list "Lack of network card"
-		"Internet connection?"
-		"false"
-		"Existance of ethernet port?"
-		"false")
-	)
-)||#
+
 (defmacro prints (input-string)
 	`(format t "~s~%" ,input-string)
+)
+
+(defmacro printss (input-string parameter)
+	`(format t "~s~s~%" ,input-string ,parameter)
 )
 
 (defmacro ifp (condition &body body1)
@@ -72,11 +58,6 @@
 	(setf *tmpList* *checkedSymptomsList*)
 	(traverseTroughPreviusSymptoms symptom)
 	(ifp *tmpList* (car *tmpList*))
-	#||(if *tmpList*
-		(progn 
-			(car *tmpList*)
-		)
-	)||#
 )
 
 (defun traverseTroughPreviusSymptoms(symptom)
@@ -127,11 +108,21 @@
 			)
 		)
 		(progn 
-			(format t "YOUR PROBLEM: ~s~%" problem)
+			(printss "YOUR PROBLEM: " problem)
 			(terpri)
 			
 		)
 	)
+)
+
+(defmacro printChooseAction(action1 action2 action3 action4)
+	(prints "******* Choose action: **********")
+	(prints "*********************************")
+	(prints action1)
+	(prints action2)
+	(prints action3)
+	(prints action4)
+	(prints "*********************************")
 )
 
 (defun printMenu()
@@ -143,6 +134,7 @@
 	(prints "* 4.Exit program                *")
 	(prints "*********************************")
 )
+
 
 (defun printAddProblemMenu()
 	(prints "******* Choose action: **********")
@@ -162,14 +154,6 @@
   (with-open-file (in filename)
     (with-standard-io-syntax
       (setf *problemList* (read in)))))
-	 
-(defun printAllProblems()
-
-)
-
-(defun printAllSymptoms()
-
-)
 
 (defun getProblemFromUser()
 	(format t "**Please type name of the problem you want to add to DB**~%")
@@ -232,17 +216,24 @@
 )
 
 (defun exitProgram()
-	(format t "Exiting the program!~%")
+	(prints "Exiting the program!")
 	(quit)
 )
 
 (defun wrongInput()
-(format t "Input could not be processed. Please try again~%")
+(prints "Input could not be processed. Please try again")
 )
 
+(defmacro ifWrongInput( action &body body)
+	`(if(numberp ,action)
+		,@body	
+		(wrongInput)
+	 )
+) 
+
 (defun startAction(action)
-	(if(numberp action)
-		(cond   ((= action 1)
+	(ifWrongInput action 
+				(cond   ((= action 1)
 				(addProblem))
 				((= action 2)
 				(startExpertSystem))
@@ -251,17 +242,17 @@
 				((= action 4)
 				(exitProgram))
 				((wrongInput))
-		)
-		(wrongInput))
+				)
+	)
 )
 
 (defun menuLoop()
-(printMenu)
-(setf menuAction (read))
-(terpri)
-(startAction menuAction)
-(setf *checkedSymptomsList* (list "Dummy?" "false"))
-(menuLoop)
+	(printMenu)
+	(setf menuAction (read))
+	(terpri)
+	(startAction menuAction)
+	(setf *checkedSymptomsList* (list "Dummy?" "false"))
+	(menuLoop)
 ) 
 
 (defmacro printAllProblemsAndSymptoms (condition)
@@ -269,13 +260,6 @@
 		(prints (car *tmpList*))
 		(setf *tmpList* (cdr *tmpList*))
 		(printAllProblemsAndSymptoms ,condition))
-	#||`(if ,condition
-		(progn 
-		(prints (car *tmpList*))
-		(setf *tmpList* (cdr *tmpList*))
-		(printAllProblemsAndSymptoms ,condition))
-		)
-		||#
 )
 
 (load-db "dbSaveTest.txt")
