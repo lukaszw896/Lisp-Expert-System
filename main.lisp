@@ -72,11 +72,6 @@
 	(setf *tmpList* *checkedSymptomsList*)
 	(traverseTroughPreviusSymptoms symptom)
 	(ifp *tmpList* (car *tmpList*))
-	#||(if *tmpList*
-		(progn 
-			(car *tmpList*)
-		)
-	)||#
 )
 
 (defun traverseTroughPreviusSymptoms(symptom)
@@ -162,14 +157,6 @@
   (with-open-file (in filename)
     (with-standard-io-syntax
       (setf *problemList* (read in)))))
-	 
-(defun printAllProblems()
-
-)
-
-(defun printAllSymptoms()
-
-)
 
 (defun getProblemFromUser()
 	(format t "**Please type name of the problem you want to add to DB**~%")
@@ -232,17 +219,24 @@
 )
 
 (defun exitProgram()
-	(format t "Exiting the program!~%")
+	(prints "Exiting the program!")
 	(quit)
 )
 
 (defun wrongInput()
-(format t "Input could not be processed. Please try again~%")
+(prints "Input could not be processed. Please try again")
 )
 
+(defmacro ifWrongInput( action &body body)
+	`(if(numberp ,action)
+		,@body	
+		(wrongInput)
+	 )
+) 
+
 (defun startAction(action)
-	(if(numberp action)
-		(cond   ((= action 1)
+	(ifWrongInput action 
+				(cond   ((= action 1)
 				(addProblem))
 				((= action 2)
 				(startExpertSystem))
@@ -251,17 +245,17 @@
 				((= action 4)
 				(exitProgram))
 				((wrongInput))
-		)
-		(wrongInput))
+				)
+	)
 )
 
 (defun menuLoop()
-(printMenu)
-(setf menuAction (read))
-(terpri)
-(startAction menuAction)
-(setf *checkedSymptomsList* (list "Dummy?" "false"))
-(menuLoop)
+	(printMenu)
+	(setf menuAction (read))
+	(terpri)
+	(startAction menuAction)
+	(setf *checkedSymptomsList* (list "Dummy?" "false"))
+	(menuLoop)
 ) 
 
 (defmacro printAllProblemsAndSymptoms (condition)
@@ -269,13 +263,6 @@
 		(prints (car *tmpList*))
 		(setf *tmpList* (cdr *tmpList*))
 		(printAllProblemsAndSymptoms ,condition))
-	#||`(if ,condition
-		(progn 
-		(prints (car *tmpList*))
-		(setf *tmpList* (cdr *tmpList*))
-		(printAllProblemsAndSymptoms ,condition))
-		)
-		||#
 )
 
 (load-db "dbSaveTest.txt")
